@@ -11,9 +11,22 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            buildConfigField 'String', "FACE_KEY", FreqOut_FaceAPIKey
+            resValue 'string', "face_api_key", FreqOut_FaceAPIKey
+
+            buildConfigField 'String', "FACE_ENDPOINT", FreqOut_FaceAPIEndpoint
+            resValue 'string', "face_api_endpoint", FreqOut_FaceAPIEndpoint
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            buildConfigField 'String', "FACE_KEY", FreqOut_FaceAPIKey
+            resValue 'string', "face_api_key", FreqOut_FaceAPIKey
+
+            buildConfigField 'String', "FACE_ENDPOINT", FreqOut_FaceAPIEndpoint
+            resValue 'string', "face_api_endpoint", FreqOut_FaceAPIEndpoint
         }
     }
 }
@@ -24,4 +37,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'com.microsoft.projectoxford:face:1.4.3'
 }
