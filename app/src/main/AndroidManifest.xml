@@ -23,6 +23,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name="com.gatech_computeraudio4590.freqout.audio.MediaPlayerService" />
     </application>
 
 </manifest>
