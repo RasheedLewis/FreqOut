@@ -6,10 +6,12 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,7 +19,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.gatech_computeraudio4590.freqout.fetcher.FaceFetcher;
+import com.gatech_computeraudio4590.freqout.fetcher.Fetcher;
+import com.gatech_computeraudio4590.freqout.fetcher.OnFetchListener;
+import com.microsoft.projectoxford.face.*;
+import com.microsoft.projectoxford.face.contract.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
 
 public class MainActivity extends AppCompatActivity  {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -26,10 +38,17 @@ public class MainActivity extends AppCompatActivity  {
         R.raw.neutral, R.raw.sadness};
 
     private static final int CAMERA_REQUEST_CODE = 100;
+    private static final int PICK_IMAGE = 1;
 
     private MediaPlayer mMediaPlayer;
 
     private ImageView imageView;
+
+    private Fetcher<InputStream, Face> faceFetcher;
+    private final String apiEndpoint = "https://eastus.api.cognitive.microsoft.com/face/v1.0";
+    private final String subscriptionKey = "4424de3156dc4bfc808c7b67fa9a44af";
+    private final FaceServiceClient faceServiceClient = new FaceServiceRestClient(apiEndpoint, subscriptionKey);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,25 +58,59 @@ public class MainActivity extends AppCompatActivity  {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
             requestPermissions(new String[] {Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
         }
+        // FACE FETCHER BASED ON EMOTION ENUMS
+        faceFetcher = new FaceFetcher(FaceServiceClient.FaceAttributeType.Emotion.values());
+        // NEEDS TO BE IMPLEMENTED TO TAKE THE API RESULTS AND PLAY A SOUND
+        faceFetcher.addOnFetchListener(new OnFetchListener() {
+            @Override
+            public void onStart() {
 
+            }
 
+            @Override
+            public void onError() {
+
+            }
+
+            @Override
+            public void onSuccess(Collection results) {
+
+            }
+        });
+        // Basic Main Activity UI Elements
         Button btnCamera = (Button)findViewById(R.id.btnCamera);
         imageView = (ImageView)findViewById(R.id.imageView);
 
+        // Opens camera and takes a picture then proceeds to onActivityResult Method
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, 0);
+                startActivityForResult(intent, PICK_IMAGE);
             }
         });
+
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // Takes the bitmap taken from the camera and sets the mainactivity imageview
         Bitmap bitmap = (Bitmap)data.getExtras().get("data");
         imageView.setImageBitmap(bitmap);
+        // Converts bitmap to inputstream and calls the fetcher
+        faceFetcher.request(bitmapToInputStream(bitmap));
+    }
+
+    private InputStream bitmapToInputStream(Bitmap bitmap) {
+        // Converts bitmap to InputStream
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+        byte[] bitmapData = bos.toByteArray();
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(bitmapData);
+
+        return inputStream;
     }
 
 
@@ -78,4 +131,6 @@ public class MainActivity extends AppCompatActivity  {
             mMediaPlayer.start();
         }
     }
+
+
 }
