@@ -26,7 +26,17 @@ public abstract class Fetcher<S, T> {
 
         @Override
         public void onSuccess(final Collection<T> results) {
-            Log.d(TAG, "Items have been fetched");
+            if (results == null) {
+                Log.d(TAG, "Returned null items");
+                return;
+            }
+            StringBuilder sb = new StringBuilder();
+            String message = "Items have been fetched: ";
+            sb.append(message);
+            for (T result : results) {
+                sb.append(result + " ");
+            }
+            Log.d(TAG, "Items have been fetched: " + sb.toString());
         }
     };
     private final Queue<S> mRequests = new LinkedList<>();

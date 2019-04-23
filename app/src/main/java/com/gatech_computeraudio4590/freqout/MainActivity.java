@@ -31,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Timer;
 
 public class MainActivity extends AppCompatActivity  {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -73,6 +74,9 @@ public class MainActivity extends AppCompatActivity  {
 
             @Override
             public void onSuccess(Collection<Face> results) {
+                if (results == null) {
+                    return;
+                }
                 int i = 0;
                 for (Face face : results) {
                     Log.d(TAG, "Face number " + i++);

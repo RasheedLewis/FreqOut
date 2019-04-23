@@ -32,8 +32,8 @@ public class FaceFetcher extends Fetcher<InputStream, Face> {
     @Override
     protected Collection<Face> doFetch(final InputStream inputStream) throws ClientException, IOException {
         final Face[] faces = mFaceServiceClient.detect(inputStream, RETURN_FACE_ID, RETURN_FACE_LANDMARKS, mFaceAttributeTypes);
-        if (faces == null) {
-            Log.e(TAG, "Returned null faces");
+        if (faces == null || faces.length == 0) {
+            Log.e(TAG, "Returned null or no faces");
             return null;
         }
         return Arrays.asList(faces);
