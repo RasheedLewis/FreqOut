@@ -21,6 +21,7 @@ import android.widget.ImageView;
 
 import com.gatech_computeraudio4590.freqout.fetcher.FaceFetcher;
 import com.gatech_computeraudio4590.freqout.fetcher.Fetcher;
+import com.gatech_computeraudio4590.freqout.fetcher.OnFaceFetchListener;
 import com.gatech_computeraudio4590.freqout.fetcher.OnFetchListener;
 import com.microsoft.projectoxford.face.*;
 import com.microsoft.projectoxford.face.contract.*;
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity  {
 
         faceFetcher = new FaceFetcher(FaceServiceClient.FaceAttributeType.Emotion.values());
         // NEEDS TO BE IMPLEMENTED TO TAKE THE API RESULTS AND PLAY A SOUND
-        faceFetcher.addOnFetchListener(new OnFetchListener() {
+        faceFetcher.addOnFetchListener(new OnFaceFetchListener() {
             @Override
             public void onStart() {
 
@@ -71,8 +72,14 @@ public class MainActivity extends AppCompatActivity  {
             }
 
             @Override
-            public void onSuccess(Collection results) {
-                Log.d("test", "ON SUCCESS");
+            public void onSuccess(Collection<Face> results) {
+                int i = 0;
+                for (Face face : results) {
+                    Log.d(TAG, "Face number " + i++);
+                    playSound(getEmotionFromFace(face));
+                }
+
+
             }
         });
         // Basic Main Activity UI Elements
@@ -114,7 +121,10 @@ public class MainActivity extends AppCompatActivity  {
 
     private void playSound(final EmotionType emotionType) {
         final int resId = mResIds[emotionType.ordinal()];
-
+        if (emotionType == null) {
+            Log.d(TAG, "returning null");
+            return;
+        }
         if (mMediaPlayer == null) {
             mMediaPlayer = MediaPlayer.create(this, resId);
         } else {
@@ -128,6 +138,42 @@ public class MainActivity extends AppCompatActivity  {
         if (!mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
         }
+        Log.d(TAG, "playSound work!" + emotionType);
+    }
+
+    private EmotionType getEmotionFromFace(final Face face) {
+        final double anger = face.faceAttributes.emotion.anger;
+        final double happiness = face.faceAttributes.emotion.happiness;
+        final double disgust = face.faceAttributes.emotion.disgust;
+        final double contempt = face.faceAttributes.emotion.contempt;
+        final double neutral = face.faceAttributes.emotion.neutral;
+        final double sadness = face.faceAttributes.emotion.sadness;
+
+        if (anger > 0.5) {
+            Log.d(TAG, "returned anger");
+            return EmotionType.ANGER;
+        } else if (happiness > 0.5) {
+            Log.d(TAG, "returned happiness");
+
+            return EmotionType.HAPPINESS;
+        } else if (disgust > 0.5) {
+            Log.d(TAG, "returned disgust");
+
+            return EmotionType.DISGUST;
+        } else if (contempt > 0.5) {
+            Log.d(TAG, "returned contempt");
+
+            return EmotionType.CONTEMPT;
+        } else if (neutral > 0.5) {
+            Log.d(TAG, "returned neutral");
+
+            return EmotionType.NEUTRAL;
+        } else if (sadness > 0.5) {
+            Log.d(TAG, "returned sadness");
+
+            return EmotionType.SADNESS;
+        } else
+            return null;
     }
 
 
