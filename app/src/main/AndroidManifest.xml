@@ -4,6 +4,7 @@
 
     <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -24,7 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <uses-library android:name ="org.apache.http.legacy" android:required ="false"/>
         <service android:name="com.gatech_computeraudio4590.freqout.audio.MediaPlayerService" />
     </application>
 

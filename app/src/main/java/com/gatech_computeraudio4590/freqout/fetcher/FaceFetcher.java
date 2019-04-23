@@ -18,12 +18,14 @@ public class FaceFetcher extends Fetcher<InputStream, Face> {
     private static final boolean RETURN_FACE_ID = true;
     private static final boolean RETURN_FACE_LANDMARKS = false;
 
+    private final String apiEndpoint = "https://eastus.api.cognitive.microsoft.com/face/v1.0";
+    private final String subscriptionKey = "4424de3156dc4bfc808c7b67fa9a44af";
     private final FaceServiceClient mFaceServiceClient;
     private final FaceServiceClient.FaceAttributeType[] mFaceAttributeTypes;
 
     public FaceFetcher(final FaceServiceClient.FaceAttributeType[] faceAttributeTypes) {
         super();
-        mFaceServiceClient = new FaceServiceRestClient(BuildConfig.FACE_ENDPOINT, BuildConfig.FACE_KEY);
+        mFaceServiceClient = new FaceServiceRestClient(apiEndpoint, subscriptionKey);
         mFaceAttributeTypes = faceAttributeTypes;
     }
 

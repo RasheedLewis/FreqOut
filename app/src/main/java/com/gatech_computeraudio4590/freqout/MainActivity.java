@@ -45,9 +45,6 @@ public class MainActivity extends AppCompatActivity  {
     private ImageView imageView;
 
     private Fetcher<InputStream, Face> faceFetcher;
-    private final String apiEndpoint = "https://eastus.api.cognitive.microsoft.com/face/v1.0";
-    private final String subscriptionKey = "4424de3156dc4bfc808c7b67fa9a44af";
-    private final FaceServiceClient faceServiceClient = new FaceServiceRestClient(apiEndpoint, subscriptionKey);
 
 
     @Override
@@ -59,6 +56,7 @@ public class MainActivity extends AppCompatActivity  {
             requestPermissions(new String[] {Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
         }
         // FACE FETCHER BASED ON EMOTION ENUMS
+
         faceFetcher = new FaceFetcher(FaceServiceClient.FaceAttributeType.Emotion.values());
         // NEEDS TO BE IMPLEMENTED TO TAKE THE API RESULTS AND PLAY A SOUND
         faceFetcher.addOnFetchListener(new OnFetchListener() {
@@ -69,12 +67,12 @@ public class MainActivity extends AppCompatActivity  {
 
             @Override
             public void onError() {
-
+                Log.d("error", "ON ERROR");
             }
 
             @Override
             public void onSuccess(Collection results) {
-
+                Log.d("test", "ON SUCCESS");
             }
         });
         // Basic Main Activity UI Elements
